@@ -113,7 +113,6 @@ namespace ShapeTheSlugcat
         protected override void GetStats(SlugcatStats stats)
         {
             stats.runspeedFac *= 1.25f;
-            stats.poleClimbSpeedFac *= 1.25f;
             stats.corridorClimbSpeedFac *= 1.25f;
 
             stats.loudnessFac *= 0.9f;
@@ -146,40 +145,18 @@ namespace ShapeTheSlugcat
 
             self.spearOnBack = new Player.SpearOnBack(self);
             Visibility = 1f;
-            _basicJumpBoost = self.jumpBoost;
-
-
-
+            _basicCatStats = new SlugcatStats(1, false);
+            GetStats(_basicCatStats);
         }
 
 
         // Movement Hooks
-        private float _basicJumpBoost;
-        private bool _basicJumpBoostUsed = true; // Helps to change modifier without nultiple rewriting 
         private void Player_Jump(On.Player.orig_Jump orig, Player self)
         {
             orig(self);
             if (!IsMe(self)) return;
 
-            if (!_basicJumpBoostUsed)
-            {
-                self.jumpBoost = _basicJumpBoost;
-                _basicJumpBoostUsed = true;
-            }
-            if (InSteathMode)
-            {
-
-                self.jumpBoost *= 0.4f;
-            }
-            else
-            {
-                if (_basicJumpBoostUsed) // Resets JumpBoost to basic slugcat stat
-                {
-                    _basicJumpBoost = self.jumpBoost;
-                    _basicJumpBoostUsed = false;
-                }
-                self.jumpBoost *= 1.1f;
-            }
+            self.jumpBoost *= 1.1f;            
         }
 
 
@@ -190,10 +167,8 @@ namespace ShapeTheSlugcat
             if (!IsMe(self)) return;
 
             spear.spearDamageBonus = 0.95f;
-            BodyChunk firstChunk = spear.firstChunk;
             spear.firstChunk.vel.x *= 0.8f;
             spear.gravity = 1.4f;
-
         }
         private void Player_ThrowObject(On.Player.orig_ThrowObject orig, Player self, int grasp, bool eu)
         {
@@ -220,7 +195,6 @@ namespace ShapeTheSlugcat
                     return false;
                 }
             }
-
             return orig(self, obj);
         } // Only one Spear at time
 
@@ -283,7 +257,7 @@ namespace ShapeTheSlugcat
 
 
         // Invisibility
-        private SlugcatStats _basicCatStats = new SlugcatStats(1, false);
+        private SlugcatStats _basicCatStats;
         private float _visibility;
 
         private float _visibilityChange = 0.1f; // Swift Changing
