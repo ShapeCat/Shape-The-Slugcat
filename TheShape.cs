@@ -145,7 +145,7 @@ namespace ShapeTheSlugcat
 
             self.spearOnBack = new Player.SpearOnBack(self);
             Visibility = 1f;
-            _basicCatStats = new SlugcatStats(1, false);
+            _basicCatStats = new SlugcatStats(1, self.Malnourished);
             GetStats(_basicCatStats);
         }
 
